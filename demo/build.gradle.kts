@@ -30,8 +30,10 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-gateway-mvc")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.testcontainers:junit-jupiter:1.20.1")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.testcontainers:kafka:1.20.1")
 }
 
 dependencyManagement {

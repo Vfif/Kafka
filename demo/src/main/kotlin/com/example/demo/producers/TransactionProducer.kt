@@ -26,13 +26,11 @@ class TransactionProducer {
     }
 
     companion object {
-        val props = object : Properties() {
-            init {
-                this[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = KafkaConfig.SERVER_CONFIG
-                this[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = LongSerializer::class.java
-                this[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = TransactionSerializer::class.java
-                this[ProducerConfig.ACKS_CONFIG] = KafkaConfig.ACKS_CONFIG
-            }
+        val props = Properties().apply {
+            this[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = KafkaConfig.SERVER_CONFIG
+            this[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = LongSerializer::class.java
+            this[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = TransactionSerializer::class.java
+            this[ProducerConfig.ACKS_CONFIG] = KafkaConfig.ACKS_CONFIG
         }
     }
 }
