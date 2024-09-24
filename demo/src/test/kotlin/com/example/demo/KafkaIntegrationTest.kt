@@ -1,7 +1,5 @@
 package com.example.demo
 
-import com.example.demo.config.KafkaConfig.CLIENT_TOPIC
-import com.example.demo.config.KafkaConfig.TRANSACTION_TOPIC
 import com.example.demo.domain.Client
 import com.example.demo.domain.Transaction
 import com.example.demo.domain.TransactionType
@@ -39,6 +37,9 @@ class KafkaIntegrationTest(
     @Autowired private val objectMapper: ObjectMapper
 ) {
     companion object {
+        private const val CLIENT_TOPIC = "clients"
+        private const val TRANSACTION_TOPIC = "transactions"
+
         @Container
         @JvmStatic
         private val kafkaContainer = KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.4"))
@@ -47,6 +48,8 @@ class KafkaIntegrationTest(
         @JvmStatic
         fun kafkaProperties(registry: DynamicPropertyRegistry) {
             registry.add("spring.kafka.bootstrap-servers") { kafkaContainer.bootstrapServers }
+            registry.add("spring.kafka.topic.client") { CLIENT_TOPIC }
+            registry.add("spring.kafka.topic.transaction") { TRANSACTION_TOPIC }
         }
 
         private lateinit var kafkaConsumer: KafkaConsumer<Long, String>

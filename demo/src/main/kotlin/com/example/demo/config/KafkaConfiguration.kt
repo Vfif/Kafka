@@ -2,8 +2,6 @@ package com.example.demo.config
 
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.LongSerializer
-import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,17 +9,25 @@ import java.util.*
 
 @Configuration
 class KafkaConfiguration {
-
     @Value("\${spring.kafka.bootstrap-servers}")
     private lateinit var bootstrapServers: String
+
+    @Value("\${spring.kafka.key-serializer}")
+    private lateinit var keySerializer: String
+
+    @Value("\${spring.kafka.value-serializer}")
+    private lateinit var valueSerializer: String
+
+    @Value("\${spring.kafka.acks}")
+    private lateinit var acks: String
 
     @Bean
     fun kafkaProperties(): Properties {
         return Properties().apply {
             this[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
-            this[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = LongSerializer::class.java
-            this[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
-            this[ProducerConfig.ACKS_CONFIG] = KafkaConfig.ACKS_CONFIG
+            this[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = keySerializer
+            this[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = valueSerializer
+            this[ProducerConfig.ACKS_CONFIG] = acks
         }
     }
 
