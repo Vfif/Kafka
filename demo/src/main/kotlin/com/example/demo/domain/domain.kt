@@ -22,5 +22,3 @@ enum class TransactionType {
     INCOME,
     OUTCOME
 }
-
-class KafkaSendException(ex: Throwable) : Exception(ex)
