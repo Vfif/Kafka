@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.KafkaContainer
+import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
@@ -32,13 +33,23 @@ import kotlin.test.assertNotNull
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class KafkaIntegrationTest(
+class KafkaConsumerIntegrationTest(
     @Autowired val restTemplate: TestRestTemplate,
     @Autowired private val objectMapper: ObjectMapper
 ) {
     companion object {
         private const val CLIENT_TOPIC = "clients"
         private const val TRANSACTION_TOPIC = "transactions"
+        private const val DB_NAME = "test"
+        private const val USERNAME = "testUser"
+        private const val PASSWORD = "testPassword"
+
+        @Container
+        @JvmStatic
+        private val postgreSQLContainer = PostgreSQLContainer("postgres:13")
+            .withDatabaseName(DB_NAME)
+            .withUsername(USERNAME)
+            .withPassword(PASSWORD)
 
         @Container
         @JvmStatic
@@ -50,6 +61,10 @@ class KafkaIntegrationTest(
             registry.add("spring.kafka.bootstrap-servers") { kafkaContainer.bootstrapServers }
             registry.add("spring.kafka.topic.client") { CLIENT_TOPIC }
             registry.add("spring.kafka.topic.transaction") { TRANSACTION_TOPIC }
+
+            registry.add("spring.datasource.url") { postgreSQLContainer.jdbcUrl + "/" + DB_NAME }
+            registry.add("spring.datasource.username") { USERNAME }
+            registry.add("spring.datasource.password") { PASSWORD }
         }
 
         private lateinit var kafkaConsumer: KafkaConsumer<Long, String>
@@ -59,7 +74,7 @@ class KafkaIntegrationTest(
         fun setup() {
             val consumerProps = Properties().apply {
                 this[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaContainer.bootstrapServers
-                this[ConsumerConfig.GROUP_ID_CONFIG] = "client-group"
+                this[ConsumerConfig.GROUP_ID_CONFIG] = "test-client-group"
                 this[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = LongDeserializer::class.java.name
                 this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
                 this[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"

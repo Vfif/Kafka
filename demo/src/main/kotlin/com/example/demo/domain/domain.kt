@@ -16,7 +16,9 @@ data class Transaction(
     val quantity: Int,
     val price: Double,
     val createdAt: LocalDateTime
-)
+){
+    fun cost() = price * quantity
+}
 
 enum class TransactionType {
     INCOME,
